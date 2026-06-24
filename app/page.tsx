@@ -4,22 +4,19 @@ export default function HomePage() {
   return (
     <div className="min-h-[calc(100vh-56px)] flex flex-col items-center justify-center px-4 py-20">
       <div className="text-center max-w-2xl mx-auto animate-fade-in">
-        {/* Badge */}
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-sky-400/20 bg-sky-400/5 text-sky-400 text-xs font-medium mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-          Free IP Geolocation Tool
+          Alat Geolokasi IP Gratis
         </div>
 
-        {/* Headline */}
         <h1 className="font-display text-5xl sm:text-6xl font-bold text-white mb-4 tracking-tight leading-[1.1]">
           ip<span className="text-sky-400">trace</span>
         </h1>
         <p className="text-slate-400 text-lg sm:text-xl mb-12 leading-relaxed">
-          Look up any IPv4 or IPv6 address. Get country, city, ISP, ASN, timezone, and precise coordinates — instantly.
+          Lacak alamat IPv4 atau IPv6 manapun. Dapatkan negara, kota, ISP, ASN, zona waktu, dan koordinat — secara instan.
         </p>
 
-        {/* CTA Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto">
           <Link
             href="/ip-lookup"
             className="group flex flex-col items-center gap-3 p-6 rounded-2xl border border-sky-400/20 bg-navy-800/60 backdrop-blur-sm hover:border-sky-400/40 hover:bg-navy-800/80 transition-all hover:-translate-y-0.5"
@@ -30,8 +27,8 @@ export default function HomePage() {
               </svg>
             </div>
             <div>
-              <p className="font-display font-semibold text-white mb-1">IP Lookup</p>
-              <p className="text-xs text-slate-500">Look up any IP address</p>
+              <p className="font-display font-semibold text-white mb-1">Cek IP</p>
+              <p className="text-xs text-slate-500">Lacak alamat IP manapun</p>
             </div>
           </Link>
 
@@ -45,20 +42,34 @@ export default function HomePage() {
               </svg>
             </div>
             <div>
-              <p className="font-display font-semibold text-white mb-1">My IP</p>
-              <p className="text-xs text-slate-500">What&apos;s my IP address?</p>
+              <p className="font-display font-semibold text-white mb-1">IP Saya</p>
+              <p className="text-xs text-slate-500">Cek IP publikmu</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/tracker"
+            className="group flex flex-col items-center gap-3 p-6 rounded-2xl border border-emerald-400/20 bg-navy-800/60 backdrop-blur-sm hover:border-emerald-400/40 hover:bg-navy-800/80 transition-all hover:-translate-y-0.5"
+          >
+            <div className="w-12 h-12 rounded-xl bg-emerald-400/10 flex items-center justify-center group-hover:bg-emerald-400/20 transition-colors">
+              <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+              </svg>
+            </div>
+            <div>
+              <p className="font-display font-semibold text-white mb-1">Pelacak</p>
+              <p className="text-xs text-slate-500">Buat link pelacak</p>
             </div>
           </Link>
         </div>
 
-        {/* Footer note */}
         <p className="mt-12 text-xs text-slate-600">
-          Powered by{" "}
+          Didukung oleh{" "}
           <a href="https://ipwho.is" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-slate-400 transition-colors">
             ipwho.is
           </a>
           {" · "}
-          No API key required · Free to use
+          Tidak perlu API key · Gratis
         </p>
       </div>
     </div>
