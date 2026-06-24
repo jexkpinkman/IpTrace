@@ -21,11 +21,9 @@ export default function TrackerDashboard() {
   const [title, setTitle] = useState("");
   const [urlError, setUrlError] = useState<string | null>(null);
 
-  // Detail modal
   const [selectedLink, setSelectedLink] = useState<TrackerLink | null>(null);
   const [clicks, setClicks] = useState<TrackerClick[]>([]);
   const [loadingClicks, setLoadingClicks] = useState(false);
-
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
@@ -47,7 +45,7 @@ export default function TrackerDashboard() {
       if (error) throw error;
       setLinks(data ?? []);
     } catch {
-      addToast("error", "Failed to load links");
+      addToast("error", "Gagal memuat daftar link");
     } finally {
       setLoadingLinks(false);
     }
@@ -57,8 +55,8 @@ export default function TrackerDashboard() {
 
   async function handleCreate() {
     setUrlError(null);
-    if (!targetUrl.trim()) { setUrlError("Enter a destination URL"); return; }
-    try { new URL(targetUrl.trim()); } catch { setUrlError("Invalid URL — include https://"); return; }
+    if (!targetUrl.trim()) { setUrlError("Masukkan URL tujuan terlebih dahulu"); return; }
+    try { new URL(targetUrl.trim()); } catch { setUrlError("URL tidak valid — pastikan ada https://"); return; }
 
     setCreating(true);
     try {
@@ -73,29 +71,28 @@ export default function TrackerDashboard() {
       setTargetUrl("");
       setTitle("");
       await fetchLinks();
-      addToast("success", "Tracking link created!");
+      addToast("success", "Link pelacak berhasil dibuat!");
 
-      // Auto copy
       await navigator.clipboard.writeText(json.short_url).catch(() => {});
-      addToast("info", "Short link copied to clipboard");
+      addToast("info", "Link pendek disalin ke clipboard");
     } catch (err) {
-      addToast("error", err instanceof Error ? err.message : "Failed to create link");
+      addToast("error", err instanceof Error ? err.message : "Gagal membuat link");
     } finally {
       setCreating(false);
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this tracking link and all its click data?")) return;
+    if (!confirm("Hapus link pelacak ini beserta semua data kliknya?")) return;
     try {
       const res = await fetch(`/api/tracker/${id}`, { method: "DELETE" });
       const json = await res.json();
       if (!json.success) throw new Error(json.error);
       setLinks(prev => prev.filter(l => l.id !== id));
       if (selectedLink?.id === id) setSelectedLink(null);
-      addToast("success", "Link deleted");
+      addToast("success", "Link berhasil dihapus");
     } catch {
-      addToast("error", "Failed to delete link");
+      addToast("error", "Gagal menghapus link");
     }
   }
 
@@ -109,19 +106,19 @@ export default function TrackerDashboard() {
       if (!json.success) throw new Error(json.error);
       setClicks(json.clicks ?? []);
     } catch {
-      addToast("error", "Failed to load click data");
+      addToast("error", "Gagal memuat data klik");
     } finally {
       setLoadingClicks(false);
     }
   }
 
   async function copyShortUrl(id: string) {
-    const url = `${APP_URL}/t/${id}`;
+    const url = `${APP_URL}/r/${id}`;
     try {
       await navigator.clipboard.writeText(url);
-      addToast("success", "Copied to clipboard!");
+      addToast("success", "Link disalin!");
     } catch {
-      addToast("error", "Failed to copy");
+      addToast("error", "Gagal menyalin link");
     }
   }
 
@@ -132,15 +129,15 @@ export default function TrackerDashboard() {
     router.refresh();
   }
 
-  const shortUrl = (id: string) => `${APP_URL}/t/${id}`;
+  const shortUrl = (id: string) => `${APP_URL}/r/${id}`;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-display text-2xl font-bold text-white mb-1">Link Tracker</h1>
-          <p className="text-slate-500 text-sm">Track who clicks your links — IP, location, device</p>
+          <h1 className="font-display text-2xl font-bold text-white mb-1">Pelacak Link</h1>
+          <p className="text-slate-500 text-sm">Lacak siapa yang mengklik link kamu &mdash; IP, lokasi, perangkat</p>
         </div>
         <div className="flex items-center gap-3">
           {userEmail && <span className="text-xs text-slate-500 hidden sm:block">{userEmail}</span>}
@@ -148,14 +145,14 @@ export default function TrackerDashboard() {
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            Logout
+            Keluar
           </button>
         </div>
       </div>
 
       {/* Create Form */}
       <div className="rounded-2xl border border-white/8 bg-navy-800/50 backdrop-blur-sm p-5 mb-6">
-        <p className="text-xs text-slate-500 uppercase tracking-wider mb-3">New Tracking Link</p>
+        <p className="text-xs text-slate-500 uppercase tracking-wider mb-3">Link Pelacak Baru</p>
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex-1">
             <input
@@ -163,7 +160,7 @@ export default function TrackerDashboard() {
               value={targetUrl}
               onChange={e => { setTargetUrl(e.target.value); setUrlError(null); }}
               onKeyDown={e => e.key === "Enter" && handleCreate()}
-              placeholder="https://destination-url.com"
+              placeholder="https://url-tujuan.com"
               className={`w-full bg-navy-900/60 border ${urlError ? "border-rose-500/50" : "border-white/8 focus:border-sky-400/50"} rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-600 outline-none transition-colors font-mono`}
             />
             {urlError && <p className="text-xs text-rose-400 mt-1.5 pl-1">{urlError}</p>}
@@ -172,7 +169,7 @@ export default function TrackerDashboard() {
             type="text"
             value={title}
             onChange={e => setTitle(e.target.value)}
-            placeholder="Label (optional)"
+            placeholder="Label (opsional)"
             className="sm:w-44 bg-navy-900/60 border border-white/8 rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-sky-400/50 transition-colors"
           />
           <button
@@ -180,11 +177,11 @@ export default function TrackerDashboard() {
             disabled={creating}
             className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-sky-400 hover:bg-sky-300 disabled:opacity-50 text-navy-900 font-display font-semibold text-sm transition-all shrink-0"
           >
-            {creating ? <><Spinner size="sm" />Creating…</> : <>
+            {creating ? <><Spinner size="sm" />Membuat…</> : <>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
               </svg>
-              Create
+              Buat
             </>}
           </button>
         </div>
@@ -193,12 +190,12 @@ export default function TrackerDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Links List */}
         <div>
-          <p className="text-xs text-slate-500 uppercase tracking-wider mb-3">Your Links ({links.length})</p>
+          <p className="text-xs text-slate-500 uppercase tracking-wider mb-3">Link Kamu ({links.length})</p>
           {loadingLinks ? (
             <div className="flex justify-center py-16"><Spinner size="lg" /></div>
           ) : links.length === 0 ? (
             <div className="rounded-2xl border border-white/5 bg-navy-800/30 p-10 text-center text-slate-600 text-sm">
-              No tracking links yet. Create one above.
+              Belum ada link pelacak. Buat satu di atas.
             </div>
           ) : (
             <div className="flex flex-col gap-3">
@@ -210,14 +207,12 @@ export default function TrackerDashboard() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-slate-200 truncate">{link.title || "Untitled"}</p>
+                      <p className="text-sm font-medium text-slate-200 truncate">{link.title || "Tanpa label"}</p>
                       <p className="text-xs text-slate-600 truncate mt-0.5 font-mono">{link.target_url}</p>
                     </div>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="text-xs font-mono text-sky-400 bg-sky-400/10 border border-sky-400/20 px-2 py-0.5 rounded-lg">
-                        {link.click_count} clicks
-                      </span>
-                    </div>
+                    <span className="text-xs font-mono text-sky-400 bg-sky-400/10 border border-sky-400/20 px-2 py-0.5 rounded-lg shrink-0">
+                      {link.click_count} klik
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-3 mt-3">
@@ -226,7 +221,7 @@ export default function TrackerDashboard() {
                       <button
                         onClick={e => { e.stopPropagation(); copyShortUrl(link.id); }}
                         className="p-1.5 rounded-lg text-slate-500 hover:text-sky-400 hover:bg-sky-400/10 transition-all"
-                        title="Copy short URL"
+                        title="Salin link"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -235,7 +230,7 @@ export default function TrackerDashboard() {
                       <button
                         onClick={e => { e.stopPropagation(); handleDelete(link.id); }}
                         className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-400/10 transition-all"
-                        title="Delete link"
+                        title="Hapus link"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -253,22 +248,22 @@ export default function TrackerDashboard() {
         <div>
           {!selectedLink ? (
             <div className="rounded-2xl border border-white/5 bg-navy-800/20 h-64 flex items-center justify-center text-slate-700 text-sm">
-              Select a link to view click logs
+              Pilih link untuk melihat log klik
             </div>
           ) : (
             <div>
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs text-slate-500 uppercase tracking-wider">
-                  Click Logs — <span className="text-sky-400">{selectedLink.title || selectedLink.id}</span>
+                  Log Klik &mdash; <span className="text-sky-400">{selectedLink.title || selectedLink.id}</span>
                 </p>
-                <span className="text-xs text-slate-600">{clicks.length} records</span>
+                <span className="text-xs text-slate-600">{clicks.length} data</span>
               </div>
 
               {loadingClicks ? (
                 <div className="flex justify-center py-16"><Spinner size="lg" /></div>
               ) : clicks.length === 0 ? (
                 <div className="rounded-2xl border border-white/5 bg-navy-800/20 p-10 text-center text-slate-600 text-sm">
-                  No clicks yet. Share your tracking link!
+                  Belum ada klik. Bagikan link pelacak kamu!
                 </div>
               ) : (
                 <div className="flex flex-col gap-2 max-h-[600px] overflow-y-auto pr-1">
@@ -313,7 +308,7 @@ function ClickRow({ click }: { click: TrackerClick }) {
             <span>·</span>
             <span>{click.browser} / {click.os}</span>
             <span>·</span>
-            <span>{new Date(click.clicked_at).toLocaleString()}</span>
+            <span>{new Date(click.clicked_at).toLocaleString("id-ID")}</span>
           </div>
         </div>
         <svg className={`w-3.5 h-3.5 text-slate-600 transition-transform shrink-0 ${expanded ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -325,16 +320,16 @@ function ClickRow({ click }: { click: TrackerClick }) {
         <div className="border-t border-white/5 p-3 grid grid-cols-2 gap-x-4 gap-y-1.5 animate-fade-in">
           {[
             ["IP", click.ip],
-            ["Country", `${flag} ${click.country}`],
-            ["City", click.city],
-            ["Region", click.region],
+            ["Negara", `${flag} ${click.country}`],
+            ["Kota", click.city],
+            ["Provinsi", click.region],
             ["ISP", click.isp],
             ["ASN", click.asn],
-            ["Timezone", click.timezone],
+            ["Zona Waktu", click.timezone],
             ["Browser", click.browser],
             ["OS", click.os],
-            ["Device", click.device],
-            ["Referer", click.referer || "Direct"],
+            ["Perangkat", click.device],
+            ["Referer", click.referer || "Langsung"],
           ].map(([label, value]) => (
             <div key={label}>
               <p className="text-xs text-slate-600">{label}</p>
@@ -343,7 +338,7 @@ function ClickRow({ click }: { click: TrackerClick }) {
           ))}
           {click.latitude && click.longitude && (
             <div className="col-span-2">
-              <p className="text-xs text-slate-600">Location</p>
+              <p className="text-xs text-slate-600">Lokasi</p>
               <a
                 href={generateMapsUrl(click.latitude, click.longitude)}
                 target="_blank"
@@ -351,7 +346,7 @@ function ClickRow({ click }: { click: TrackerClick }) {
                 onClick={e => e.stopPropagation()}
                 className="text-xs text-sky-400 hover:text-sky-300 font-mono transition-colors"
               >
-                {click.latitude.toFixed(4)}, {click.longitude.toFixed(4)} → Maps ↗
+                {click.latitude.toFixed(4)}, {click.longitude.toFixed(4)} → Buka Maps ↗
               </a>
             </div>
           )}
