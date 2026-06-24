@@ -16,9 +16,9 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false);
 
   async function handleRegister() {
-    if (!email || !password || !confirm) { setError("Fill in all fields"); return; }
-    if (password !== confirm) { setError("Passwords don't match"); return; }
-    if (password.length < 6) { setError("Password must be at least 6 characters"); return; }
+    if (!email || !password || !confirm) { setError("Isi semua kolom terlebih dahulu"); return; }
+    if (password !== confirm) { setError("Password tidak cocok"); return; }
+    if (password.length < 6) { setError("Password minimal 6 karakter"); return; }
 
     setLoading(true);
     setError(null);
@@ -49,10 +49,10 @@ export default function RegisterPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <h2 className="font-display text-xl font-bold text-white mb-2">Check your email</h2>
-          <p className="text-slate-400 text-sm mb-6">We sent a confirmation link to <span className="text-sky-400">{email}</span>. Click it to activate your account.</p>
+          <h2 className="font-display text-xl font-bold text-white mb-2">Cek email kamu</h2>
+          <p className="text-slate-400 text-sm mb-6">Kami kirim link konfirmasi ke <span className="text-sky-400">{email}</span>. Klik link tersebut untuk mengaktifkan akun.</p>
           <Link href="/auth/login" className="text-sm text-sky-400 hover:text-sky-300 transition-colors">
-            Back to login →
+            Kembali ke halaman masuk →
           </Link>
         </div>
       </div>
@@ -69,8 +69,8 @@ export default function RegisterPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
               </svg>
             </div>
-            <h1 className="font-display text-xl font-bold text-white">Create account</h1>
-            <p className="text-slate-500 text-sm mt-1">Start tracking your links</p>
+            <h1 className="font-display text-xl font-bold text-white">Buat akun</h1>
+            <p className="text-slate-500 text-sm mt-1">Mulai lacak link kamu</p>
           </div>
 
           {error && (
@@ -89,7 +89,7 @@ export default function RegisterPage() {
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="kamu@email.com"
                 className="w-full bg-navy-900/60 border border-white/8 rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-indigo-400/50 transition-colors"
               />
             </div>
@@ -99,12 +99,12 @@ export default function RegisterPage() {
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder="Min. 6 characters"
+                placeholder="Min. 6 karakter"
                 className="w-full bg-navy-900/60 border border-white/8 rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-indigo-400/50 transition-colors"
               />
             </div>
             <div>
-              <label className="block text-xs text-slate-500 mb-1.5 uppercase tracking-wider">Confirm Password</label>
+              <label className="block text-xs text-slate-500 mb-1.5 uppercase tracking-wider">Konfirmasi Password</label>
               <input
                 type="password"
                 value={confirm}
@@ -120,14 +120,14 @@ export default function RegisterPage() {
               disabled={loading}
               className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-600 disabled:opacity-50 text-white font-display font-semibold text-sm transition-all"
             >
-              {loading ? <><Spinner size="sm" /> Creating account…</> : "Create Account"}
+              {loading ? <><Spinner size="sm" /> Membuat akun…</> : "Buat Akun"}
             </button>
           </div>
 
           <p className="text-center text-sm text-slate-500 mt-6">
-            Have an account?{" "}
+            Sudah punya akun?{" "}
             <Link href="/auth/login" className="text-sky-400 hover:text-sky-300 transition-colors">
-              Sign in
+              Masuk
             </Link>
           </p>
         </div>
