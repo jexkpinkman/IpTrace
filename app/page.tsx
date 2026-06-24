@@ -13,7 +13,7 @@ export default function HomePage() {
           ip<span className="text-sky-400">trace</span>
         </h1>
         <p className="text-slate-400 text-lg sm:text-xl mb-12 leading-relaxed">
-          Lacak alamat IPv4 atau IPv6 manapun. Dapatkan negara, kota, ISP, ASN, zona waktu, dan koordinat — secara instan.
+          Lacak alamat IPv4 atau IPv6 manapun. Dapatkan negara, kota, ISP, ASN, zona waktu, dan koordinat &mdash; secara instan.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto">
