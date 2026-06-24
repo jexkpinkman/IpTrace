@@ -17,12 +17,12 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "iptrace — IP Lookup & Geolocation",
-  description: "Look up any IPv4 or IPv6 address to get country, city, ISP, ASN, timezone, and location data. Fast and free.",
+  title: "iptrace — Cek IP & Geolokasi",
+  description: "Cek alamat IP manapun untuk mendapatkan negara, kota, ISP, ASN, zona waktu, dan lokasi. Cepat dan gratis.",
   keywords: ["IP lookup", "IP geolocation", "IP address", "IPv4", "IPv6", "ASN", "ISP"],
   openGraph: {
-    title: "iptrace — IP Lookup & Geolocation",
-    description: "Look up any IP address to get geolocation, ISP, and network data.",
+    title: "iptrace — Cek IP & Geolokasi",
+    description: "Cek alamat IP untuk mendapatkan data geolokasi, ISP, dan jaringan.",
     type: "website",
   },
 };
