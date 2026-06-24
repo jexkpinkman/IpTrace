@@ -14,9 +14,9 @@ export function IPResultCard({ data }: IPResultCardProps) {
   async function copyIP() {
     try {
       await navigator.clipboard.writeText(data.ip);
-      addToast("success", "IP address copied!");
+      addToast("success", "Alamat IP disalin!");
     } catch {
-      addToast("error", "Failed to copy IP");
+      addToast("error", "Gagal menyalin IP");
     }
   }
 
@@ -124,10 +124,10 @@ export function IPResultCard({ data }: IPResultCardProps) {
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2 text-xs text-slate-500 uppercase tracking-wider">
               <PinIcon />
-              <span>Location Preview</span>
+              <span>Pratinjau Lokasi</span>
             </div>
             <span className="text-xs text-sky-400/70 hover:text-sky-400 transition-colors">
-              Open in Google Maps →
+              Buka di Google Maps →
             </span>
           </div>
           <div className="w-full h-40 rounded-lg overflow-hidden bg-navy-900/60 relative">
@@ -136,7 +136,7 @@ export function IPResultCard({ data }: IPResultCardProps) {
               className="w-full h-full border-0 opacity-80 hover:opacity-100 transition-opacity"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Location map"
+              title="Peta lokasi"
             />
           </div>
         </div>
