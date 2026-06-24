@@ -69,7 +69,7 @@ export default function HomePage() {
             ipwho.is
           </a>
           {" · "}
-          Tidak perlu API key · Gratis
+          Jexk-Tracker
         </p>
       </div>
     </div>
