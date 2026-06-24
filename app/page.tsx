@@ -1,0 +1,66 @@
+import Link from "next/link";
+
+export default function HomePage() {
+  return (
+    <div className="min-h-[calc(100vh-56px)] flex flex-col items-center justify-center px-4 py-20">
+      <div className="text-center max-w-2xl mx-auto animate-fade-in">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-sky-400/20 bg-sky-400/5 text-sky-400 text-xs font-medium mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+          Free IP Geolocation Tool
+        </div>
+
+        {/* Headline */}
+        <h1 className="font-display text-5xl sm:text-6xl font-bold text-white mb-4 tracking-tight leading-[1.1]">
+          ip<span className="text-sky-400">trace</span>
+        </h1>
+        <p className="text-slate-400 text-lg sm:text-xl mb-12 leading-relaxed">
+          Look up any IPv4 or IPv6 address. Get country, city, ISP, ASN, timezone, and precise coordinates — instantly.
+        </p>
+
+        {/* CTA Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+          <Link
+            href="/ip-lookup"
+            className="group flex flex-col items-center gap-3 p-6 rounded-2xl border border-sky-400/20 bg-navy-800/60 backdrop-blur-sm hover:border-sky-400/40 hover:bg-navy-800/80 transition-all hover:-translate-y-0.5"
+          >
+            <div className="w-12 h-12 rounded-xl bg-sky-400/10 flex items-center justify-center group-hover:bg-sky-400/20 transition-colors">
+              <svg className="w-6 h-6 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <div>
+              <p className="font-display font-semibold text-white mb-1">IP Lookup</p>
+              <p className="text-xs text-slate-500">Look up any IP address</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/my-ip"
+            className="group flex flex-col items-center gap-3 p-6 rounded-2xl border border-indigo-400/20 bg-navy-800/60 backdrop-blur-sm hover:border-indigo-400/40 hover:bg-navy-800/80 transition-all hover:-translate-y-0.5"
+          >
+            <div className="w-12 h-12 rounded-xl bg-indigo-400/10 flex items-center justify-center group-hover:bg-indigo-400/20 transition-colors">
+              <svg className="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <div>
+              <p className="font-display font-semibold text-white mb-1">My IP</p>
+              <p className="text-xs text-slate-500">What&apos;s my IP address?</p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Footer note */}
+        <p className="mt-12 text-xs text-slate-600">
+          Powered by{" "}
+          <a href="https://ipwho.is" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-slate-400 transition-colors">
+            ipwho.is
+          </a>
+          {" · "}
+          No API key required · Free to use
+        </p>
+      </div>
+    </div>
+  );
+}
