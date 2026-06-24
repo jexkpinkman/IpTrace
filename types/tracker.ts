@@ -20,6 +20,10 @@ export interface TrackerClick {
   timezone: string | null;
   latitude: number | null;
   longitude: number | null;
+  // GPS dari browser (akurat, bisa beda dari IP geo)
+  gps_latitude: number | null;
+  gps_longitude: number | null;
+  gps_accuracy: number | null;
   user_agent: string | null;
   browser: string | null;
   os: string | null;
