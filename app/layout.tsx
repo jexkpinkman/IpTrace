@@ -17,7 +17,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "iptrace — Cek IP & Geolokasi",
+  title: "Jexk Tracker — Cek IP & Geolokasi",
   description: "Cek alamat IP manapun untuk mendapatkan negara, kota, ISP, ASN, zona waktu, dan lokasi. Cepat dan gratis.",
   keywords: ["IP lookup", "IP geolocation", "IP address", "IPv4", "IPv6", "ASN", "ISP"],
   openGraph: {
