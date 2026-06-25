@@ -9,6 +9,7 @@ export async function POST(
   const supabase = createServiceSupabase();
 
   let body: {
+    click_id?: number;
     gps_latitude?: number;
     gps_longitude?: number;
     gps_accuracy?: number;
@@ -20,31 +21,35 @@ export async function POST(
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 
-  const { gps_latitude, gps_longitude, gps_accuracy } = body;
+  const { click_id, gps_latitude, gps_longitude, gps_accuracy } = body;
 
   if (typeof gps_latitude !== "number" || typeof gps_longitude !== "number") {
     return NextResponse.json({ error: "Missing coordinates" }, { status: 400 });
   }
 
-  // Find most recent click for this link
-  const { data: click, error: fetchErr } = await supabase
-    .from("tracker_clicks")
-    .select("id")
-    .eq("link_id", code)
-    .order("clicked_at", { ascending: false })
-    .limit(1)
-    .single();
+  // Kalau ada click_id langsung pakai, kalau tidak fallback cari terbaru
+  let clickId = click_id;
+  if (!clickId) {
+    const { data: click } = await supabase
+      .from("tracker_clicks")
+      .select("id")
+      .eq("link_id", code)
+      .order("clicked_at", { ascending: false })
+      .limit(1)
+      .single();
+    clickId = click?.id;
+  }
 
-  if (fetchErr || !click) {
+  if (!clickId) {
     return NextResponse.json({ error: "Click not found" }, { status: 404 });
   }
 
-  // Reverse geocoding pakai Nominatim (gratis, no API key)
+  // Reverse geocoding
   let gps_address: string | null = null;
-  let gps_village: string | null = null;   // kelurahan
-  let gps_district: string | null = null;  // kecamatan
-  let gps_city: string | null = null;      // kota/kabupaten
-  let gps_province: string | null = null;  // provinsi
+  let gps_village: string | null = null;
+  let gps_district: string | null = null;
+  let gps_city: string | null = null;
+  let gps_province: string | null = null;
 
   try {
     const geoRes = await fetch(
@@ -63,11 +68,9 @@ export async function POST(
       gps_city = a.city ?? a.town ?? a.municipality ?? null;
       gps_province = a.state ?? a.province ?? null;
     }
-  } catch {
-    // silently fail — tetap simpan koordinat
-  }
+  } catch { /* silently fail */ }
 
-  const { error: updateErr } = await supabase
+  const { error } = await supabase
     .from("tracker_clicks")
     .update({
       gps_latitude,
@@ -79,10 +82,10 @@ export async function POST(
       gps_city,
       gps_province,
     })
-    .eq("id", click.id);
+    .eq("id", clickId);
 
-  if (updateErr) {
-    return NextResponse.json({ error: updateErr.message }, { status: 500 });
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });
