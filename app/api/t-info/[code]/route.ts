@@ -3,12 +3,30 @@ import { createServiceSupabase } from "@/lib/supabase";
 import { parseUA } from "@/lib/ua-parser";
 
 function getClientIP(request: NextRequest): string {
-  return (
-    request.headers.get("cf-connecting-ip") ||
-    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-    request.headers.get("x-real-ip") ||
-    "unknown"
-  );
+  const headers = [
+    "x-real-ip",
+    "x-forwarded-for",
+    "cf-connecting-ip",
+    "x-client-ip",
+    "x-cluster-client-ip",
+    "true-client-ip",
+    "forwarded",
+  ];
+
+  for (const h of headers) {
+    const val = request.headers.get(h);
+    if (val) {
+      // x-forwarded-for bisa berisi multiple IP, ambil yang pertama
+      const ip = val.split(",")[0].trim();
+      if (ip && ip !== "unknown") return ip;
+    }
+  }
+
+  // Fallback: Next.js 13+ expose via request.ip
+  // @ts-ignore
+  if (request.ip) return request.ip;
+
+  return "unknown";
 }
 
 export async function GET(
@@ -28,12 +46,12 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  // Log klik di background (fire and forget)
   const ip = getClientIP(request);
   const ua = request.headers.get("user-agent");
   const referer = request.headers.get("referer") || null;
   const { browser, os, device } = parseUA(ua);
 
+  // Log klik fire and forget
   (async () => {
     try {
       let geoData = {
@@ -50,8 +68,8 @@ export async function GET(
 
       if (ip !== "unknown") {
         const res = await fetch(`https://ipwho.is/${ip}`, {
-          headers: { "User-Agent": "iptrace/1.0" },
-          signal: AbortSignal.timeout(4000),
+          headers: { "User-Agent": "jexktracker/1.0" },
+          signal: AbortSignal.timeout(5000),
         });
         if (res.ok) {
           const geo = await res.json();
@@ -82,8 +100,9 @@ export async function GET(
         referer,
       });
 
-      // Update click count
-      await supabase.rpc("increment_click_count", { link_id: link.id }).maybeSingle();
+      await supabase
+        .rpc("increment_click_count", { link_id: link.id })
+        .maybeSingle();
 
     } catch {
       // silently fail
