@@ -17,23 +17,20 @@ export default function MyIPPage() {
     setLoading(true);
     setError(null);
     if (isRefresh) setResult(null);
-
     try {
       const res = await fetch("/api/myip", { cache: "no-store" });
       const json = await res.json();
-
       if (!json.success) {
-        setError(json.error || "Tidak dapat mendeteksi IP kamu");
-        if (isRefresh) addToast("error", "Gagal memperbarui data IP");
+        setError(json.error || "Gagal mendeteksi IP");
+        if (isRefresh) addToast("error", "Gagal memperbarui");
       } else {
         setResult(json.data);
         setLastFetched(new Date());
-        if (isRefresh) addToast("success", "Data IP diperbarui");
+        if (isRefresh) addToast("success", "Diperbarui");
       }
     } catch {
-      const msg = "Error jaringan — periksa koneksi internet kamu";
-      setError(msg);
-      if (isRefresh) addToast("error", msg);
+      setError("Gagal terhubung ke server");
+      if (isRefresh) addToast("error", "Error jaringan");
     } finally {
       setLoading(false);
     }
@@ -43,47 +40,38 @@ export default function MyIPPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
-      <div className="mb-10 animate-fade-in flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-4 mb-8">
         <div>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 rounded-lg bg-indigo-400/10 flex items-center justify-center">
-              <svg className="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <h1 className="font-display text-2xl font-bold text-white">IP Saya</h1>
-          </div>
-          <p className="text-slate-500 text-sm">Alamat IP publik dan informasi jaringan kamu saat ini.</p>
-          {lastFetched && <p className="text-xs text-slate-600 mt-1">Terakhir diperbarui: {lastFetched.toLocaleTimeString("id-ID")}</p>}
+          <p className="font-mono text-[10px] tracking-widest text-zinc-700 uppercase mb-2">JEXK.TRACK</p>
+          <h1 className="text-2xl font-bold text-white mb-1">IP Saya</h1>
+          <p className="text-zinc-600 text-sm">
+            IP publik dan info jaringan kamu saat ini.
+            {lastFetched && <span className="text-zinc-700 ml-2 font-mono text-xs">{lastFetched.toLocaleTimeString("id-ID")}</span>}
+          </p>
         </div>
-
         <button
           onClick={() => fetchMyIP(true)}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-indigo-400/30 bg-indigo-400/10 hover:bg-indigo-400/20 text-indigo-400 text-sm font-medium transition-all disabled:opacity-50 shrink-0 mt-1"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-zinc-800 hover:border-zinc-600 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white text-xs font-mono font-medium transition-all disabled:opacity-40 shrink-0 mt-1"
         >
           <svg className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          {loading ? "Memuat…" : "Perbarui"}
+          {loading ? "Memuat…" : "Refresh"}
         </button>
       </div>
 
       {loading && (
-        <div className="flex flex-col items-center justify-center gap-4 py-20 animate-fade-in">
-          <div className="relative"><Spinner size="lg" /><div className="absolute inset-0 rounded-full border-2 border-indigo-400/10 animate-ping" /></div>
-          <p className="text-sm text-slate-500 font-mono">Mendeteksi IP kamu…</p>
+        <div className="flex flex-col items-center gap-3 py-20">
+          <Spinner size="lg" />
+          <p className="text-xs font-mono text-zinc-600">mendeteksi IP kamu...</p>
         </div>
       )}
 
       {error && !loading && (
-        <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/5 text-rose-400 text-sm flex items-start gap-3 animate-slide-up">
-          <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <div>
-            <p className="font-medium mb-0.5">Deteksi Gagal</p>
-            <p className="text-rose-400/70 text-xs">{error}</p>
-            <button onClick={() => fetchMyIP(true)} className="mt-2 text-xs text-rose-400 hover:text-rose-300 underline transition-colors">Coba lagi</button>
-          </div>
+        <div className="p-4 rounded-xl border border-red-500/20 bg-red-500/5 text-red-400 text-sm font-mono mb-6">
+          {error}
+          <button onClick={() => fetchMyIP(true)} className="block mt-2 text-xs text-zinc-600 hover:text-zinc-400 underline transition-colors">Coba lagi</button>
         </div>
       )}
 
