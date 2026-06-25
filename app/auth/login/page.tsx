@@ -32,7 +32,6 @@ export default function LoginPage() {
     <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8">
-          <p className="font-mono text-[10px] tracking-widest text-zinc-700 uppercase mb-3">JEXK.TRACK</p>
           <h1 className="text-2xl font-bold text-white">Masuk</h1>
           <p className="text-zinc-600 text-sm mt-1">Akses dashboard pelacak kamu</p>
         </div>
