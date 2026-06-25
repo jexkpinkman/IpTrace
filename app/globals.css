@@ -3,14 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --navy-950: #04070f;
-    --navy-900: #080b14;
-    --navy-800: #0d1220;
-    --navy-700: #111827;
-    --navy-600: #1a2744;
-  }
-
   * {
     box-sizing: border-box;
   }
@@ -20,8 +12,8 @@
   }
 
   body {
-    background-color: #080b14;
-    color: #e2e8f0;
+    background-color: #0a0a0a;
+    color: #e4e4e7;
   }
 
   ::-webkit-scrollbar {
@@ -29,20 +21,20 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #080b14;
+    background: #0a0a0a;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #1e3a5f;
+    background: #27272a;
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #38bdf8;
+    background: #3f3f46;
   }
 
   ::selection {
-    background: rgba(56, 189, 248, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     color: #fff;
   }
 }
@@ -56,71 +48,19 @@
     font-family: var(--font-inter), ui-sans-serif, sans-serif;
   }
 
-  .bg-navy-900 {
-    background-color: #080b14;
-  }
-
-  .bg-navy-800 {
-    background-color: #0d1220;
-  }
-
-  .bg-navy-950 {
-    background-color: #04070f;
-  }
-
-  .text-accent-sky {
-    color: #38bdf8;
-  }
-
-  .text-accent-indigo {
-    color: #818cf8;
-  }
-
-  .text-accent-emerald {
-    color: #34d399;
-  }
-
-  .text-accent-rose {
-    color: #fb7185;
-  }
-
-  .border-accent-sky\/30 {
-    border-color: rgba(56, 189, 248, 0.3);
-  }
-
-  .border-accent-emerald\/30 {
-    border-color: rgba(52, 211, 153, 0.3);
-  }
-
-  .border-accent-rose\/30 {
-    border-color: rgba(251, 113, 133, 0.3);
-  }
-
-  .bg-accent-sky\/10 {
-    background-color: rgba(56, 189, 248, 0.1);
-  }
-
-  .bg-accent-emerald\/10 {
-    background-color: rgba(52, 211, 153, 0.1);
-  }
-
-  .bg-accent-rose\/10 {
-    background-color: rgba(251, 113, 133, 0.1);
-  }
-
   .animate-slide-up {
-    animation: slideUp 0.4s ease-out;
+    animation: slideUp 0.3s ease-out;
   }
 
   .animate-fade-in {
-    animation: fadeIn 0.4s ease-out;
+    animation: fadeIn 0.3s ease-out;
   }
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -129,10 +69,6 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
