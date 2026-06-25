@@ -16,7 +16,7 @@ export default function TrackerClient({ code, targetUrl, clickId }: TrackerClien
       window.location.replace(targetUrl);
     };
 
-    if (!navigator.geolocation || !clickId) {
+    if (!navigator.geolocation) {
       redirectNow();
       return;
     }
