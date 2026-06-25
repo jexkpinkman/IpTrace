@@ -52,7 +52,6 @@ export default function IPLookupPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
       <div className="mb-8">
-        <p className="font-mono text-[10px] tracking-widest text-zinc-700 uppercase mb-2">JEXK.TRACK</p>
         <h1 className="text-2xl font-bold text-white mb-1">Cek IP</h1>
         <p className="text-zinc-600 text-sm">Masukkan IPv4 atau IPv6 untuk lihat lokasi dan info jaringannya.</p>
       </div>
