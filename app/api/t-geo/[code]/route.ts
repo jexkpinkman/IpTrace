@@ -22,14 +22,11 @@ export async function POST(
 
   const { gps_latitude, gps_longitude, gps_accuracy } = body;
 
-  if (
-    typeof gps_latitude !== "number" ||
-    typeof gps_longitude !== "number"
-  ) {
+  if (typeof gps_latitude !== "number" || typeof gps_longitude !== "number") {
     return NextResponse.json({ error: "Missing coordinates" }, { status: 400 });
   }
 
-  // Find the most recent click for this link (the one just recorded by t/[code]/route.ts)
+  // Find most recent click for this link
   const { data: click, error: fetchErr } = await supabase
     .from("tracker_clicks")
     .select("id")
@@ -42,12 +39,45 @@ export async function POST(
     return NextResponse.json({ error: "Click not found" }, { status: 404 });
   }
 
+  // Reverse geocoding pakai Nominatim (gratis, no API key)
+  let gps_address: string | null = null;
+  let gps_village: string | null = null;   // kelurahan
+  let gps_district: string | null = null;  // kecamatan
+  let gps_city: string | null = null;      // kota/kabupaten
+  let gps_province: string | null = null;  // provinsi
+
+  try {
+    const geoRes = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${gps_latitude}&lon=${gps_longitude}&format=json&addressdetails=1`,
+      {
+        headers: { "User-Agent": "jexk-tracker/1.0" },
+        signal: AbortSignal.timeout(5000),
+      }
+    );
+    if (geoRes.ok) {
+      const geo = await geoRes.json();
+      gps_address = geo.display_name ?? null;
+      const a = geo.address ?? {};
+      gps_village = a.village ?? a.suburb ?? a.neighbourhood ?? a.hamlet ?? null;
+      gps_district = a.county ?? a.city_district ?? a.district ?? null;
+      gps_city = a.city ?? a.town ?? a.municipality ?? null;
+      gps_province = a.state ?? a.province ?? null;
+    }
+  } catch {
+    // silently fail — tetap simpan koordinat
+  }
+
   const { error: updateErr } = await supabase
     .from("tracker_clicks")
     .update({
       gps_latitude,
       gps_longitude,
       gps_accuracy,
+      gps_address,
+      gps_village,
+      gps_district,
+      gps_city,
+      gps_province,
     })
     .eq("id", click.id);
 
