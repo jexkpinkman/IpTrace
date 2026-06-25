@@ -321,13 +321,22 @@ function ClickRow({ click }: { click: TrackerClick }) {
             </div>
           )}
           {click.gps_latitude && click.gps_longitude && (
-            <div className="col-span-2">
-              <p className="font-mono text-[10px] text-zinc-700 uppercase tracking-widest">
-                GPS Akurat {click.gps_accuracy && <span>(±{Math.round(click.gps_accuracy)}m)</span>}
+            <div className="col-span-2 border-t border-zinc-800/60 pt-2.5 mt-1">
+              <p className="font-mono text-[10px] text-emerald-600 uppercase tracking-widest mb-1.5">
+                📍 GPS Akurat {click.gps_accuracy && <span className="text-zinc-700">(±{Math.round(click.gps_accuracy)}m)</span>}
               </p>
-              <a href={generateMapsUrl(click.gps_latitude, click.gps_longitude)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-xs text-emerald-500 hover:text-emerald-400 font-mono transition-colors">
-                {click.gps_latitude.toFixed(6)}, {click.gps_longitude.toFixed(6)} → Maps ↗
+              <a href={generateMapsUrl(click.gps_latitude, click.gps_longitude)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="inline-flex items-center gap-1.5 text-xs text-emerald-500 hover:text-emerald-400 font-mono transition-colors mb-2">
+                {click.gps_latitude.toFixed(6)}, {click.gps_longitude.toFixed(6)} <span className="text-zinc-600">→ Maps ↗</span>
               </a>
+              {(click.gps_village || click.gps_district || click.gps_city || click.gps_province) && (
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mt-1">
+                  {click.gps_village && <div><p className="font-mono text-[10px] text-zinc-700 uppercase tracking-widest">Kelurahan</p><p className="text-xs text-zinc-300 mt-0.5">{click.gps_village}</p></div>}
+                  {click.gps_district && <div><p className="font-mono text-[10px] text-zinc-700 uppercase tracking-widest">Kecamatan</p><p className="text-xs text-zinc-300 mt-0.5">{click.gps_district}</p></div>}
+                  {click.gps_city && <div><p className="font-mono text-[10px] text-zinc-700 uppercase tracking-widest">Kota</p><p className="text-xs text-zinc-300 mt-0.5">{click.gps_city}</p></div>}
+                  {click.gps_province && <div><p className="font-mono text-[10px] text-zinc-700 uppercase tracking-widest">Provinsi</p><p className="text-xs text-zinc-300 mt-0.5">{click.gps_province}</p></div>}
+                </div>
+              )}
+              {click.gps_address && <p className="text-[10px] text-zinc-700 font-mono mt-2 leading-relaxed">{click.gps_address}</p>}
             </div>
           )}
         </div>
