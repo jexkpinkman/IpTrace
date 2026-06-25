@@ -131,7 +131,6 @@ export default function TrackerDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <p className="font-mono text-[10px] tracking-widest text-zinc-700 uppercase mb-1">JEXK.TRACK</p>
           <h1 className="text-xl font-bold text-white">Link Tracker</h1>
         </div>
         <div className="flex items-center gap-4">
