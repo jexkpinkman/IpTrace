@@ -1,69 +1,108 @@
-"use client";
+import { headers } from "next/headers";
+import { createServiceSupabase } from "@/lib/supabase";
+import { parseUA } from "@/lib/ua-parser";
+import TrackerClient from "./client";
 
-import { useEffect } from "react";
-import { useParams } from "next/navigation";
+async function logClick(code: string, request: {
+  ip: string;
+  ua: string | null;
+  referer: string | null;
+}) {
+  try {
+    const supabase = createServiceSupabase();
 
-export default function TrackerLandingPage() {
-  const params = useParams();
-  const code = params.code as string;
+    const { data: link } = await supabase
+      .from("tracker_links")
+      .select("id, target_url")
+      .eq("id", code)
+      .single();
 
-  useEffect(() => {
-    if (!code) return;
+    if (!link) return null;
 
-    fetch(`/api/t-info/${code}`)
-      .then((r) => r.json())
-      .then((d) => {
-        const targetUrl = d.target_url;
-        if (!targetUrl) return;
+    const { browser, os, device } = parseUA(request.ua);
 
-        const redirectNow = () => {
-          window.location.replace(targetUrl);
-        };
+    let geoData = {
+      country: null as string | null,
+      country_code: null as string | null,
+      city: null as string | null,
+      region: null as string | null,
+      isp: null as string | null,
+      asn: null as string | null,
+      timezone: null as string | null,
+      latitude: null as number | null,
+      longitude: null as number | null,
+    };
 
-        if (!navigator.geolocation) {
-          redirectNow();
-          return;
-        }
-
-        let redirected = false;
-
-        const timer = setTimeout(() => {
-          if (!redirected) {
-            redirected = true;
-            redirectNow();
+    if (request.ip !== "unknown") {
+      try {
+        const res = await fetch(`https://ipwho.is/${request.ip}`, {
+          headers: { "User-Agent": "jexktracker/1.0" },
+          signal: AbortSignal.timeout(5000),
+        });
+        if (res.ok) {
+          const geo = await res.json();
+          if (geo.success) {
+            geoData = {
+              country: geo.country ?? null,
+              country_code: geo.country_code ?? null,
+              city: geo.city ?? null,
+              region: geo.region ?? null,
+              isp: geo.connection?.isp ?? geo.connection?.org ?? null,
+              asn: geo.connection?.asn ? `AS${geo.connection.asn}` : null,
+              timezone: geo.timezone?.id ?? null,
+              latitude: geo.latitude ?? null,
+              longitude: geo.longitude ?? null,
+            };
           }
-        }, 8000);
+        }
+      } catch { /* silently fail */ }
+    }
 
-        navigator.geolocation.getCurrentPosition(
-          async (pos) => {
-            await fetch(`/api/t-geo/${code}`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                gps_latitude: pos.coords.latitude,
-                gps_longitude: pos.coords.longitude,
-                gps_accuracy: pos.coords.accuracy,
-              }),
-            }).catch(() => {});
-
-            clearTimeout(timer);
-            if (!redirected) {
-              redirected = true;
-              redirectNow();
-            }
-          },
-          () => {
-            clearTimeout(timer);
-            if (!redirected) {
-              redirected = true;
-              redirectNow();
-            }
-          },
-          { enableHighAccuracy: true, timeout: 7000, maximumAge: 0 }
-        );
+    const { data: click } = await supabase
+      .from("tracker_clicks")
+      .insert({
+        link_id: link.id,
+        ip: request.ip,
+        ...geoData,
+        user_agent: request.ua,
+        browser,
+        os,
+        device,
+        referer: request.referer,
       })
-      .catch(() => {});
-  }, [code]);
+      .select("id")
+      .single();
 
-  return null;
+    return { targetUrl: link.target_url, clickId: click?.id ?? null };
+  } catch {
+    return null;
+  }
+}
+
+export default async function TrackerPage({
+  params,
+}: {
+  params: Promise<{ code: string }>;
+}) {
+  const { code } = await params;
+  const headersList = await headers();
+
+  const ip =
+    headersList.get("x-real-ip") ||
+    headersList.get("x-forwarded-for")?.split(",")[0].trim() ||
+    headersList.get("cf-connecting-ip") ||
+    "unknown";
+
+  const ua = headersList.get("user-agent");
+  const referer = headersList.get("referer") || null;
+
+  const result = await logClick(code, { ip, ua, referer });
+
+  return (
+    <TrackerClient
+      code={code}
+      targetUrl={result?.targetUrl ?? null}
+      clickId={result?.clickId ?? null}
+    />
+  );
 }
