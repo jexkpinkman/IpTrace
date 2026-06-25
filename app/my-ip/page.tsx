@@ -42,7 +42,6 @@ export default function MyIPPage() {
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
       <div className="flex items-start justify-between gap-4 mb-8">
         <div>
-          <p className="font-mono text-[10px] tracking-widest text-zinc-700 uppercase mb-2">JEXK.TRACK</p>
           <h1 className="text-2xl font-bold text-white mb-1">IP Saya</h1>
           <p className="text-zinc-600 text-sm">
             IP publik dan info jaringan kamu saat ini.
