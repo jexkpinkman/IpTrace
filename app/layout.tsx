@@ -18,11 +18,11 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "Jexk Tracker — Cek IP & Geolokasi",
-  description: "Cek alamat IP manapun untuk mendapatkan negara, kota, ISP, ASN, zona waktu, dan lokasi. Cepat dan gratis.",
-  keywords: ["IP lookup", "IP geolocation", "IP address", "IPv4", "IPv6", "ASN", "ISP"],
+  description: "Lacak IP, lokasi, dan perangkat siapapun yang membuka linkmu.",
+  keywords: ["IP lookup", "IP tracker", "IP geolocation", "link tracker"],
   openGraph: {
-    title: "iptrace — Cek IP & Geolokasi",
-    description: "Cek alamat IP untuk mendapatkan data geolokasi, ISP, dan jaringan.",
+    title: "Jexk Tracker — Cek IP & Geolokasi",
+    description: "Lacak IP, lokasi, dan perangkat siapapun yang membuka linkmu.",
     type: "website",
   },
 };
@@ -33,20 +33,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-body antialiased`}>
+    <html lang="id" className="dark">
+      <body className={`${inter.variable} ${spaceGrotesk.variable} font-body antialiased bg-[#0a0a0a]`}>
         <ToastProvider>
-          <div className="min-h-screen bg-navy-900 text-slate-100">
-            {/* Background effects */}
-            <div className="fixed inset-0 bg-radial-glow pointer-events-none" />
-            <div
-              className="fixed inset-0 pointer-events-none opacity-40"
-              style={{
-                backgroundImage:
-                  "linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px)",
-                backgroundSize: "60px 60px",
-              }}
-            />
+          <div className="min-h-screen bg-[#0a0a0a] text-zinc-200">
             <Navbar />
             <main className="relative pt-14">{children}</main>
           </div>
