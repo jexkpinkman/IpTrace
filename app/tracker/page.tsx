@@ -276,14 +276,13 @@ function ClickRow({ click }: { click: TrackerClick }) {
       className="rounded-xl border border-zinc-800/60 bg-zinc-900/30 hover:border-zinc-700 overflow-hidden cursor-pointer transition-all"
       onClick={() => setExpanded(!expanded)}
     >
-      <div className="flex items-center gap-3 p-3">
-        <span className="text-base shrink-0">{flag}</span>
+      <div className="flex items-center gap-2 p-3">
+        <span className="text-sm shrink-0">{flag}</span>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-sm font-mono text-zinc-300">{click.ip ?? "—"}</span>
-            <span className="text-xs text-zinc-600">{click.city ?? "?"}, {click.country ?? "?"}</span>
-          </div>
-          <p className="text-xs text-zinc-700 font-mono mt-0.5">
+          <p className="text-xs font-mono text-zinc-300 truncate">
+            {click.ip ?? "—"} · {click.city ?? "?"}, {click.country ?? "?"}
+          </p>
+          <p className="text-[10px] text-zinc-700 font-mono truncate mt-0.5">
             {click.browser} · {click.os} · {new Date(click.clicked_at).toLocaleString("id-ID")}
           </p>
         </div>
@@ -293,7 +292,7 @@ function ClickRow({ click }: { click: TrackerClick }) {
       </div>
 
       {expanded && (
-        <div className="border-t border-zinc-800/60 p-3 grid grid-cols-2 gap-x-4 gap-y-2.5">
+        <div className="border-t border-zinc-800/60 p-3 flex flex-col gap-1.5">
           {[
             ["IP", click.ip],
             ["Negara", `${flag} ${click.country}`],
@@ -306,37 +305,58 @@ function ClickRow({ click }: { click: TrackerClick }) {
             ["OS", click.os],
             ["Perangkat", click.device],
             ["Referer", click.referer || "Langsung"],
-          ].map(([label, value]) => (
-            <div key={label}>
-              <p className="font-mono text-[10px] text-zinc-700 uppercase tracking-widest">{label}</p>
-              <p className="text-xs text-zinc-400 font-mono truncate mt-0.5">{value ?? "—"}</p>
+          ].map(([label, value]) => value ? (
+            <div key={label} className="flex items-baseline gap-2 min-w-0">
+              <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-widest shrink-0 w-16">{label}</span>
+              <span className="text-xs text-zinc-400 font-mono truncate">{value}</span>
             </div>
-          ))}
+          ) : null)}
           {click.latitude && click.longitude && (
-            <div className="col-span-2">
-              <p className="font-mono text-[10px] text-zinc-700 uppercase tracking-widest">Lokasi IP</p>
-              <a href={generateMapsUrl(click.latitude, click.longitude)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-xs text-zinc-400 hover:text-zinc-200 font-mono transition-colors">
+            <div className="flex items-baseline gap-2 min-w-0">
+              <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-widest shrink-0 w-16">Lokasi</span>
+              <a href={generateMapsUrl(click.latitude, click.longitude)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-xs text-zinc-400 hover:text-zinc-200 font-mono transition-colors truncate">
                 {click.latitude.toFixed(4)}, {click.longitude.toFixed(4)} → Maps ↗
               </a>
             </div>
           )}
           {click.gps_latitude && click.gps_longitude && (
-            <div className="col-span-2 border-t border-zinc-800/60 pt-2.5 mt-1">
-              <p className="font-mono text-[10px] text-emerald-600 uppercase tracking-widest mb-1.5">
-                📍 GPS Akurat {click.gps_accuracy && <span className="text-zinc-700">(±{Math.round(click.gps_accuracy)}m)</span>}
-              </p>
-              <a href={generateMapsUrl(click.gps_latitude, click.gps_longitude)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="inline-flex items-center gap-1.5 text-xs text-emerald-500 hover:text-emerald-400 font-mono transition-colors mb-2">
-                {click.gps_latitude.toFixed(6)}, {click.gps_longitude.toFixed(6)} <span className="text-zinc-600">→ Maps ↗</span>
-              </a>
-              {(click.gps_village || click.gps_district || click.gps_city || click.gps_province) && (
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mt-1">
-                  {click.gps_village && <div><p className="font-mono text-[10px] text-zinc-700 uppercase tracking-widest">Kelurahan</p><p className="text-xs text-zinc-300 mt-0.5">{click.gps_village}</p></div>}
-                  {click.gps_district && <div><p className="font-mono text-[10px] text-zinc-700 uppercase tracking-widest">Kecamatan</p><p className="text-xs text-zinc-300 mt-0.5">{click.gps_district}</p></div>}
-                  {click.gps_city && <div><p className="font-mono text-[10px] text-zinc-700 uppercase tracking-widest">Kota</p><p className="text-xs text-zinc-300 mt-0.5">{click.gps_city}</p></div>}
-                  {click.gps_province && <div><p className="font-mono text-[10px] text-zinc-700 uppercase tracking-widest">Provinsi</p><p className="text-xs text-zinc-300 mt-0.5">{click.gps_province}</p></div>}
+            <div className="border-t border-zinc-800/60 pt-2 mt-1 flex flex-col gap-1.5">
+              <div className="flex items-baseline gap-2">
+                <span className="font-mono text-[10px] text-emerald-600 uppercase tracking-widest shrink-0 w-16">GPS</span>
+                <a href={generateMapsUrl(click.gps_latitude, click.gps_longitude)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-xs text-emerald-500 hover:text-emerald-400 font-mono transition-colors truncate">
+                  {click.gps_latitude.toFixed(6)}, {click.gps_longitude.toFixed(6)} → Maps ↗
+                </a>
+              </div>
+              {click.gps_accuracy && (
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-widest shrink-0 w-16">Akurasi</span>
+                  <span className="text-xs text-zinc-400 font-mono">±{Math.round(click.gps_accuracy)}m</span>
                 </div>
               )}
-              {click.gps_address && <p className="text-[10px] text-zinc-700 font-mono mt-2 leading-relaxed">{click.gps_address}</p>}
+              {click.gps_village && (
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-widest shrink-0 w-16">Kel.</span>
+                  <span className="text-xs text-zinc-300 font-mono truncate">{click.gps_village}</span>
+                </div>
+              )}
+              {click.gps_district && (
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-widest shrink-0 w-16">Kec.</span>
+                  <span className="text-xs text-zinc-300 font-mono truncate">{click.gps_district}</span>
+                </div>
+              )}
+              {click.gps_city && (
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-widest shrink-0 w-16">Kota</span>
+                  <span className="text-xs text-zinc-300 font-mono truncate">{click.gps_city}</span>
+                </div>
+              )}
+              {click.gps_province && (
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-widest shrink-0 w-16">Prov.</span>
+                  <span className="text-xs text-zinc-300 font-mono truncate">{click.gps_province}</span>
+                </div>
+              )}
             </div>
           )}
         </div>
