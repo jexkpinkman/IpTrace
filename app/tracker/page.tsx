@@ -255,7 +255,7 @@ export default function TrackerDashboard() {
                   belum ada klik
                 </div>
               ) : (
-                <div className="flex flex-col gap-2 max-h-[600px] overflow-y-auto pr-1">
+                <div className="flex flex-col gap-2 pr-1">
                   {clicks.map(click => <ClickRow key={click.id} click={click} />)}
                 </div>
               )}
