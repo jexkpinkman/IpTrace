@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createBrowserSupabase } from "@/lib/supabase";
@@ -13,6 +14,7 @@ export default function RegisterPage() {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
   const [success, setSuccess] = useState(false);
 
   async function handleRegister() {
@@ -23,13 +25,13 @@ export default function RegisterPage() {
     setError(null);
     const supabase = createBrowserSupabase();
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { emailRedirectTo: `${appUrl}/auth/callback` },
     });
     setLoading(false);
-    if (error) { setError(error.message); } else { setSuccess(true); }
+    if (error) { setError(error.message); } else if (data.session) { router.push("/tracker"); router.refresh(); } else { setSuccess(true); }
   }
 
   if (success) {
