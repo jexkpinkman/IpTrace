@@ -17,14 +17,20 @@ export default function LoginPage() {
     if (!email || !password) { setError("Isi semua kolom"); return; }
     setLoading(true);
     setError(null);
-    const supabase = createBrowserSupabase();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setError("Email atau password salah");
-      setLoading(false);
-    } else {
+    try {
+      const supabase = createBrowserSupabase();
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        setError(error.message || "Email atau password salah");
+        setLoading(false);
+        return;
+      }
       router.push("/tracker");
       router.refresh();
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(err instanceof Error ? err.message : "Gagal terhubung ke server. Cek koneksi internet kamu.");
+      setLoading(false);
     }
   }
 
