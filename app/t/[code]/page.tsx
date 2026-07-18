@@ -3,22 +3,27 @@ import { createServiceSupabase } from "@/lib/supabase";
 import { parseUA } from "@/lib/ua-parser";
 import TrackerClient from "./client";
 
-async function logClick(code: string, request: {
-  ip: string;
-  ua: string | null;
-  referer: string | null;
-}) {
+async function getTargetUrl(code: string, supabase: ReturnType<typeof createServiceSupabase>) {
+  const { data: link, error } = await supabase
+    .from("tracker_links")
+    .select("id, target_url")
+    .eq("id", code)
+    .single();
+
+  if (error || !link) {
+    console.error("[t/code] link not found:", code, error?.message);
+    return null;
+  }
+
+  return link;
+}
+
+async function logClick(
+  linkId: string,
+  supabase: ReturnType<typeof createServiceSupabase>,
+  request: { ip: string; ua: string | null; referer: string | null }
+) {
   try {
-    const supabase = createServiceSupabase();
-
-    const { data: link } = await supabase
-      .from("tracker_links")
-      .select("id, target_url")
-      .eq("id", code)
-      .single();
-
-    if (!link) return null;
-
     const { browser, os, device } = parseUA(request.ua);
 
     let geoData = {
@@ -55,13 +60,15 @@ async function logClick(code: string, request: {
             };
           }
         }
-      } catch { /* silently fail */ }
+      } catch (err) {
+        console.error("[t/code] ipwho.is fetch failed:", err);
+      }
     }
 
-    const { data: click } = await supabase
+    const { data: click, error } = await supabase
       .from("tracker_clicks")
       .insert({
-        link_id: link.id,
+        link_id: linkId,
         ip: request.ip,
         ...geoData,
         user_agent: request.ua,
@@ -73,8 +80,14 @@ async function logClick(code: string, request: {
       .select("id")
       .single();
 
-    return { targetUrl: link.target_url, clickId: click?.id ?? null };
-  } catch {
+    if (error) {
+      console.error("[t/code] insert click failed:", error.message);
+      return null;
+    }
+
+    return click?.id ?? null;
+  } catch (err) {
+    console.error("[t/code] logClick threw:", err);
     return null;
   }
 }
@@ -96,13 +109,19 @@ export default async function TrackerPage({
   const ua = headersList.get("user-agent");
   const referer = headersList.get("referer") || null;
 
-  const result = await logClick(code, { ip, ua, referer });
+  const supabase = createServiceSupabase();
+
+  // 1. Ambil target_url dulu — ini yang PALING PENTING, harus selalu jalan.
+  const link = await getTargetUrl(code, supabase);
+
+  // 2. Baru catat klik. Kalau ini gagal, redirect TETAP jalan (tidak saling blokir lagi).
+  const clickId = link ? await logClick(link.id, supabase, { ip, ua, referer }) : null;
 
   return (
     <TrackerClient
       code={code}
-      targetUrl={result?.targetUrl ?? null}
-      clickId={result?.clickId ?? null}
+      targetUrl={link?.target_url ?? null}
+      clickId={clickId}
     />
   );
 }
